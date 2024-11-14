@@ -1,0 +1,45 @@
+name: Deploy Laravel Project to InfinityFree
+
+on:
+  push:
+    branches:
+      - main  # Adjust if deploying from a different branch
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'  # Match your Laravel PHP version
+          extensions: mbstring, exif, bcmath, gd, openssl
+
+      - name: Install dependencies
+        run: composer install --optimize-autoloader --no-dev
+
+      - name: Build assets (if using Laravel Mix or similar)
+        run: npm install && npm run prod
+
+      - name: Upload to InfinityFree
+        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./public  # Deploy only the public directory contents
+          server-dir: /htdocs  # Target the server's web root
+
+      - name: Set up .env (optional)
+        run: |
+          echo "APP_ENV=production" >> .env
+          echo "APP_KEY=${{ secrets.APP_KEY }}" >> .env
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
