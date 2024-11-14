@@ -31,7 +31,7 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./public  # Deploy only the public directory contents
+          local-dir: ./public/  # Deploy only the public directory contents
           server-dir: /htdocs  # Target the server's web root
 
       - name: Set up .env (optional)
