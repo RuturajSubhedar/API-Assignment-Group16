@@ -1,7 +1,7 @@
 services:
   - type: web
     name: Laravel-App
-    env: php
+    env: php-8.1
     buildCommand: "composer install && php artisan key:generate"
     startCommand: "php artisan serve --host 0.0.0.0 --port 10000"
     envVars:
